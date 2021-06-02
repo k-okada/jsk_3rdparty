@@ -5,7 +5,7 @@ ROS package for https://www.chaplus.jp/
 
 ## Tutorials
 
-1) Obtain API keys for chaplus service, goto https://chaplus.work and acreate accoutn, then reqeust [beta program](https://forms.gle/DQWXdXzUH4MnE5wv6)
+1) Obtain API keys for chaplus service, goto https://www.chaplus.jp/api and send an e-mail, then you can get your API key in the e-mail.
 
 2) Put API key as json file under `` `rospack find chaplus_ros`/apikey.json ``
    ```
