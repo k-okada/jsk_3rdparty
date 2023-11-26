@@ -33,9 +33,10 @@ catkin_package(
 # generate the virtualenv
 catkin_generate_virtualenv(
   INPUT_REQUIREMENTS requirements.in
-  PYTHON_INTERPRETER python3
+  PYTHON_INTERPRETER python3.9
   USE_SYSTEM_PACKAGES FALSE
   CHECK_VENV FALSE
+  EXTRA_PIP_ARGS -v --index-url=https://www.piwheels.org/simple --extra-index-url=https://pypi.org/simple --no-cache-dir
   )
 
 # install

@@ -10,7 +10,6 @@ from requests.exceptions import ConnectionError
 # ROS libraries
 import actionlib
 import ast
-from dialogflow_task_executive.msg import DialogResponse
 from gdrive_ros.srv import *
 from google_chat_ros.google_chat import GoogleChatRESTClient
 from google_chat_ros.google_chat import GoogleChatHTTPSServer
