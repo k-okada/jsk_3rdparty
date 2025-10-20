@@ -1,0 +1,19 @@
+<launch>
+  <arg name="port_right" default="/dev/ttyACM-righteye" />
+  <arg name="port_left" default="/dev/ttyACM-lefteye" />
+  <arg name="eye_asset_file" default="$(find eye_display)/launch/kashiwagi.yaml" />
+  <arg name="baud" default="115200" />
+  <arg name="debug" default="false" />
+  <arg name="direction_right" default="4" />
+  <arg name="direction_left" default="4" />
+
+  <include file="$(find eye_display)/launch/demo_dual.launch" >
+    <arg name="eye_asset_file" value="$(arg eye_asset_file)" />
+    <arg name="port_right" value="$(arg port_right)" />
+    <arg name="port_left" value="$(arg port_left)" />
+    <arg name="baud" value="$(arg baud)" />
+    <arg name="debug" value="$(arg debug)" />
+    <arg name="direction_right" value="$(arg direction_right)" />
+    <arg name="direction_left" value="$(arg direction_left)" />
+  </include>
+</launch>
