@@ -189,6 +189,96 @@ roslaunch eye_display control_eye_with_joystick.launch
 
 ![eye_layer_structure](./doc/eye_structure.svg)
 
+## Robot Integration Development (로봇 탑재 개발)
+
+### 현재 하드웨어 구성
+
+| 항목 | 내용 |
+|------|------|
+| 눈 모듈 | M5Stamp S3 × 2 (240×240 GC9A01 원형 디스플레이) |
+| 연결 방식 | USB → rosserial (USB CDC, baud 무관) |
+| 포트 고정 | udev symlink (`/etc/udev/rules.d/99-eyemodule.rules`) |
+
+```
+/dev/ttyACM-lefteye   → 왼쪽 눈 (serial: F4:12:FA:9D:8E:94)
+/dev/ttyACM-righteye  → 오른쪽 눈 (serial: 70:04:1D:D3:DD:7C)
+```
+
+좌우 전환 시 `/etc/udev/rules.d/99-eyemodule.rules`에서 symlink 이름만 교체 후:
+```bash
+sudo udevadm control --reload-rules && sudo udevadm trigger
+```
+
+### 펌웨어 빌드 & 플래시
+
+```bash
+cd ~/catkin_ws/src/jsk_3rdparty/eye_display
+
+# 빌드
+pio run -e stamps3-ros
+
+# 펌웨어 업로드
+pio run -e stamps3-ros -t upload --upload-port /dev/ttyACM-lefteye
+pio run -e stamps3-ros -t upload --upload-port /dev/ttyACM-righteye
+
+# 이미지(SPIFFS) 업로드 (펌웨어 최초 설치 시 또는 이미지 변경 시)
+pio run -e stamps3-ros -t uploadfs --upload-port /dev/ttyACM-lefteye
+pio run -e stamps3-ros -t uploadfs --upload-port /dev/ttyACM-righteye
+```
+
+### 듀얼 눈 실행
+
+```bash
+# 터미널 1: 눈 모듈 rosserial 연결
+roslaunch eye_display demo_dual.launch \
+  port_left:=/dev/ttyACM-lefteye \
+  port_right:=/dev/ttyACM-righteye \
+  direction_left:=4 \
+  direction_right:=4
+
+# 터미널 2: 조이스틱 제어
+roslaunch eye_display control_eye_with_joystick.launch
+```
+
+### ROS 토픽 구조
+
+```
+/left/eye_display/look_at    (geometry_msgs/Point)  - 시선 좌표 (x, y: 픽셀 오프셋)
+/right/eye_display/look_at   (geometry_msgs/Point)
+/left/eye_display/eye_status (std_msgs/String)       - 감정 (normal/blink/happy/...)
+/right/eye_display/eye_status(std_msgs/String)
+```
+
+### 앞으로의 개발 계획 (로봇 통합)
+
+#### 1단계: 깊이 카메라 시선 추적 (SR300)
+- `gaze_target_node.py`: 뎁스 카메라로 가장 가까운 사람 위치 감지 → `/gaze_target` 발행
+- `gaze_controller.py`: 3D 좌표 → 양안 시선각 변환 → `look_at` 토픽 발행
+- 관련 파라미터: `camera_y_offset`, `ipd`, `angle_scale`, `smoothing_factor`
+
+#### 2단계: 로봇 동작과 연동
+- 로봇 컴퓨터의 ROS 토픽(손/관절 좌표 등)을 구독하여 시선 자동 생성
+- 예: `/right_hand_pose` (geometry_msgs/PoseStamped) → 손 방향으로 시선 이동
+- 구현 방향: 별도 `robot_gaze_controller.py` 작성, `/gaze_target` 토픽에 발행
+
+#### 3단계: 주변 사람 인식 반응
+- 카메라(RGB 또는 뎁스) 기반 사람 감지
+- 감지된 사람 방향으로 시선 이동 + 감정 표현 변화
+- 구현 방향: OpenCV/MediaPipe 또는 YOLO 기반 face/body 감지 → `/gaze_target` 발행
+
+#### 토픽 연동 설계 (예시)
+```
+[로봇 컴퓨터]                    [눈 모듈 컴퓨터]
+/right_hand_pose ───────────────→ robot_gaze_controller.py
+/person_detected ───────────────→        ↓
+/camera/depth    ───────────────→ /gaze_target (geometry_msgs/Point)
+                                         ↓
+                                  gaze_controller.py
+                                         ↓
+                            /left/eye_display/look_at
+                            /right/eye_display/look_at
+```
+
 ## For Developers
 
 ### How to update msg
