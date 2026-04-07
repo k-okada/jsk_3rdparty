@@ -1,0 +1,4 @@
+<launch>
+  <include file="$(find teleop_twist_joy)/launch/teleop.launch" />
+  <node pkg="eye_display" type="joy_eye_status.py" name="joy_eye_status"/>
+</launch>

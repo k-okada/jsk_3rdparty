@@ -176,6 +176,11 @@ eye_asset_rotation_theta: <emotion>: <type>: <comma separated values>
 eye_asset_zoom: <emotion>: <type>: <comma separated values>
 ```
 
+### How to control with joystick
+```
+roslaunch eye_display control_eye_with_joystick.launch
+```
+
 ### Description of direction
 
 ![eye_display_direction](./doc/eye_display_direction.svg)
