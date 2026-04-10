@@ -1,4 +1,16 @@
 <launch>
-  <include file="$(find teleop_twist_joy)/launch/teleop.launch" />
+  <!-- joy_node: decrease deadzone for reacting with tiny movements  -->
+  <node pkg="joy" type="joy_node" name="joy_node">
+    <param name="dev"             value="/dev/input/js0" />
+    <param name="deadzone"        value="0.05" />
+    <param name="autorepeat_rate" value="30" />
+  </node>
+
+  <!-- Or you can use here after merging this PR: https://github.com/ros-teleop/teleop_twist_joy/pull/47 -->
+  <!-- <include file="$(find teleop_twist_joy)/launch/teleop.launch"> -->
+  <!--   <arg name="joy_dev" value="/dev/input/js0" /> -->
+  <!--   <arg name="joy_deadzone" value="0.05"/> -->
+  <!--   <arg name="joy_autorepeat_rate" value="30"/> -->
+  <!-- </include> -->
   <node pkg="eye_display" type="joy_eye_status.py" name="joy_eye_status"/>
 </launch>
