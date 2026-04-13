@@ -1,0 +1,49 @@
+<launch>
+  <!-- Joystick device -->
+  <arg name="dev"              default="/dev/input/js0" />
+  <arg name="deadzone"         default="0.05" />
+  <arg name="autorepeat_rate"  default="30" />
+
+  <!-- Eye movement range (pixels) -->
+  <arg name="left_edge"      default="30.0"  />
+  <arg name="right_edge"     default="-30.0" />
+  <arg name="upper_edge"     default="-30.0" />
+  <arg name="bottom_edge"    default="30.0"  />
+
+  <!-- Dual-eye offset calibration -->
+  <arg name="x_diff"         default="0.0"  />
+  <arg name="y_diff"         default="0.0"  />
+
+  <!-- Publish rate and snap threshold -->
+  <arg name="duration"       default="0.05"  />
+  <arg name="snap_threshold" default="0.1"   />
+
+  <!-- Calibration offsets: eye position when joystick is at neutral -->
+  <arg name="r_offset_x"    default="0.0"  />
+  <arg name="r_offset_y"    default="0.0"  />
+  <arg name="l_offset_x"    default="0.0"  />
+  <arg name="l_offset_y"    default="0.0"  />
+
+  <!-- joy_node: small deadzone so tiny stick movements are detected -->
+  <node pkg="joy" type="joy_node" name="joy_node">
+    <param name="dev"             value="$(arg dev)" />
+    <param name="deadzone"        value="$(arg deadzone)" />
+    <param name="autorepeat_rate" value="$(arg autorepeat_rate)" />
+  </node>
+
+  <node pkg="eye_display" type="joy_eye_status.py" name="joy_eye_status" output="screen">
+    <param name="left_edge"      value="$(arg left_edge)"      />
+    <param name="right_edge"     value="$(arg right_edge)"     />
+    <param name="upper_edge"     value="$(arg upper_edge)"     />
+    <param name="bottom_edge"    value="$(arg bottom_edge)"    />
+    <param name="x_diff"         value="$(arg x_diff)"         />
+    <param name="y_diff"         value="$(arg y_diff)"         />
+    <param name="duration"       value="$(arg duration)"       />
+    <param name="snap_threshold" value="$(arg snap_threshold)" />
+    <param name="r_offset_x"    value="$(arg r_offset_x)"     />
+    <param name="r_offset_y"    value="$(arg r_offset_y)"     />
+    <param name="l_offset_x"    value="$(arg l_offset_x)"     />
+    <param name="l_offset_y"    value="$(arg l_offset_y)"     />
+  </node>
+
+</launch>
