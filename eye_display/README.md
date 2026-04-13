@@ -176,6 +176,18 @@ eye_asset_rotation_theta: <emotion>: <type>: <comma separated values>
 eye_asset_zoom: <emotion>: <type>: <comma separated values>
 ```
 
+### How to control with joystick
+
+```bash
+roslaunch eye_display control_eye_with_joystick.launch
+```
+
+Joystick axes control the eye gaze direction, and buttons 0-6 map to expressions
+(normal, blink, surprised, sleepy, angry, sad, happy).
+
+Supports both single-eye and dual-eye modes (auto-detected).
+See `control_eye_with_joystick.launch` for all available parameters.
+
 ### Description of direction
 
 ![eye_display_direction](./doc/eye_display_direction.svg)
